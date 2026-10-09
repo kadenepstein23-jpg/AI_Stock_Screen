@@ -107,13 +107,25 @@ GitHub-safe sample outputs are in [`portfolio/`](portfolio/):
 
 ![Growth top 20](portfolio/2026-10-07_sharadar/charts/growth_top20_pillars.png)
 
-| # | Growth | Score | | # | Income / Value | Score |
-|---|---|---|---|---|---|---|
-| 1 | NVDA · NVIDIA | 77.4 | | 1 | HRB · H&R Block | 76.6 |
-| 2 | DECK · Deckers Outdoor | 75.7 | | 2 | OZK · Bank OZK (bank) | 73.3 |
-| 3 | FIX · Comfort Systems USA | 73.4 | | 3 | KRG · Kite Realty (REIT) | 71.4 |
-| 4 | KNSL · Kinsale Capital (insurance) | 72.4 | | 4 | KFY · Korn Ferry | 71.3 |
-| 5 | NBIX · Neurocrine Biosciences | 71.2 | | 5 | UFPI · UFP Industries (cyclical) | 71.0 |
+**Growth: top 5**
+
+| # | Ticker | Company | Profile | Score |
+|---|---|---|---|---|
+| 1 | NVDA | NVIDIA | default | 77.4 |
+| 2 | DECK | Deckers Outdoor | default | 75.7 |
+| 3 | FIX | Comfort Systems USA | default | 73.4 |
+| 4 | KNSL | Kinsale Capital | insurance | 72.4 |
+| 5 | NBIX | Neurocrine Biosciences | default | 71.2 |
+
+**Income / Value: top 5**
+
+| # | Ticker | Company | Profile | Score |
+|---|---|---|---|---|
+| 1 | HRB | H&R Block | default | 76.6 |
+| 2 | OZK | Bank OZK | bank | 73.3 |
+| 3 | KRG | Kite Realty Group | REIT | 71.4 |
+| 4 | KFY | Korn Ferry | default | 71.3 |
+| 5 | UFPI | UFP Industries | cyclical | 71.0 |
 
 More charts: [Income top 20](portfolio/2026-10-07_sharadar/charts/income_top20_pillars.png) ·
 [universe funnel](portfolio/2026-10-07_sharadar/charts/universe_funnel.png) ·
