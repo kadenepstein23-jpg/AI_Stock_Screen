@@ -1,0 +1,14 @@
+[project]
+name = "ai-stock-screen"
+version = "2.0.0"
+description = "Modular, provider-neutral U.S. equity screener (growth and income/value)"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["pandas>=1.5", "numpy>=1.23", "pyarrow>=10", "PyYAML>=6.0", "requests>=2.28"]
+
+[project.optional-dependencies]
+charts = ["matplotlib>=3.6"]
+dev = ["pytest>=7"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

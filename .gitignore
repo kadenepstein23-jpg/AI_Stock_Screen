@@ -1,0 +1,61 @@
+# ---- licensed / local data: NEVER commit -----------------------------------
+# Sharadar raw downloads, normalized snapshots, SEC cache, every run output tier
+# (full/ = raw licensed values, retained/ = licensed-derived ratios) and purge logs.
+/data/
+/outputs/
+/compliance/
+cache/
+**/full/
+**/retained/
+*.parquet
+*.feather
+*.arrow
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.db
+*.sqlite
+*.sqlite3
+*.duckdb
+*.bulk
+*.zip
+*.gz
+*.tar
+*.tgz
+*.7z
+*.xlsx
+*.xls
+
+# ---- secrets ------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*secret*
+*credentials*
+
+# ---- legacy prototype (kept local only; never published) ---------------------
+/archive/
+
+# ---- Python / tooling / OS ---------------------------------------------------
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.claude/
+*.log
+.DS_Store
+Thumbs.db

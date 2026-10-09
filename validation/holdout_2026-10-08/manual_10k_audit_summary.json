@@ -1,0 +1,15 @@
+{
+  "audit": "H6 manual 10-K audit of 20 holdout companies",
+  "completed": "2026-10-08",
+  "companies": 20,
+  "criterion": ">= 90% Y in every column",
+  "pass_rate_pct": {
+    "profile_correct": 100.0,
+    "financials_match_10k": 100.0,
+    "flags_factually_correct": 100.0
+  },
+  "result": "PASS",
+  "selection": "top 5 per screen, 5 needs-review, 5 random",
+  "canonical_automated_result": "9 criteria passed, 0 failed (H3d is a diagnostic, not a criterion)",
+  "note": "This folder is the CANONICAL automated holdout result (evaluated before any holdout company was inspected): 9 criteria passed, 0 failed. Later reruns fail H0b by design because TH, EVRG and PIPR were inspected during H6 and used in parser regression tests. See docs/VALIDATION_REPORT.md."
+}

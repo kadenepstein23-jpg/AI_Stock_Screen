@@ -1,0 +1,55 @@
+{
+  "evaluated_at": "2026-10-08T14:07:44",
+  "provider": "sharadar",
+  "snapshot": "2026-10-08_192527",
+  "methodology_fingerprint": "fc2159212b4d7966",
+  "freeze_status": "frozen",
+  "holdout_size": 152,
+  "holdout_in_universe": 152,
+  "development_in_universe": 203,
+  "rest_of_universe": 1858,
+  "holdout_meta": {
+    "drawn_at": "2026-10-08T14:04:14",
+    "provider_snapshot": "2026-10-08_192527",
+    "methodology_fingerprint": "fc2159212b4d7966",
+    "seed": "20261008",
+    "size": "152",
+    "list_sha256": "89500a4fafc15b9e",
+    "pool": "2010 investable companies after removing 203 development-set names"
+  },
+  "accuracy_match_rates": {
+    "holdout": {
+      "revenue": 88.86075949367088,
+      "net_income": 95.55052790346909,
+      "operating_cash_flow": 99.47368421052632,
+      "total_assets": 99.53810623556582,
+      "equity": 98.68624420401855,
+      "dividends_paid": 92.93233082706766,
+      "eps_diluted": 93.25931800158604,
+      "shares_diluted_wavg": 92.46511627906978
+    },
+    "development": {
+      "revenue": 84.25925925925925,
+      "net_income": 97.50889679715303,
+      "operating_cash_flow": 100.0,
+      "total_assets": 100.0,
+      "equity": 99.644128113879,
+      "dividends_paid": 94.54191033138402,
+      "eps_diluted": 94.8306595365419,
+      "shares_diluted_wavg": 96.83972911963883
+    }
+  },
+  "results": {
+    "H0": "PASS",
+    "H0b": "PASS",
+    "H1": "PASS",
+    "H2": "PASS",
+    "H3": "PASS",
+    "H3d": "FAIL",
+    "H4-growth": "PASS",
+    "H5-growth": "PASS",
+    "H4-income": "PASS",
+    "H5-income": "PASS",
+    "H6": "TODO"
+  }
+}

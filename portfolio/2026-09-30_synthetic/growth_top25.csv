@@ -1,0 +1,18 @@
+﻿rank,ticker,name,sector,profile,composite_score,confidence_grade,data_coverage_pct,flags,pillar_growth,pillar_operating_leverage,pillar_profitability,pillar_financial_strength,pillar_valuation,pillar_capital_allocation
+1,SYCMB,Brightwater Cloud (Synthetic),Technology,default,68.2675,A,100.0,,80.4141,85.479,83.5021,57.6977,37.0047,46.8954
+2,SYCME,Everline Payments (Synthetic),Technology,default,61.6027,A,100.0,,61.0104,53.1989,65.6155,64.2204,51.381,75.1634
+3,SYCMA,Alderbrook Software (Synthetic),Technology,default,59.6703,A,100.0,,64.8484,77.6022,67.6029,59.8719,35.0974,46.8954
+4,SYCMC,Cobalt Devices (Synthetic),Technology,cyclical,58.9447,A,100.0,,67.793,56.4482,79.9475,50.4815,31.4045,46.8954
+5,SYCMD,Dunmore Diagnostics (Synthetic),Healthcare,default,58.6107,A,100.0,,58.78,59.1821,74.5861,58.6848,44.3267,46.8954
+6,SYCMF,Foxglove Medical (Synthetic),Healthcare,default,57.0912,A,100.0,,43.5317,73.7255,66.8929,64.7139,59.2262,46.8954
+7,SYDIL,Apex Social (Synthetic),Technology,default,47.3161,A,100.0,"dilution, high_sbc, extreme_valuation",77.0096,56.8852,60.9643,82.3643,32.0594,11.683
+8,SYSGF,Lakemont Systems (Synthetic),Technology,default,45.9295,A,100.0,,47.614,33.3221,48.5483,27.7724,52.2419,66.0131
+9,SYSGD,Juniper Retail (Synthetic),Consumer Cyclical,default,44.9776,A,100.0,,37.2782,16.3585,31.5231,28.4394,86.947,85.4575
+10,SYHGC,Orbit Robotics (Synthetic),Industrials,default,38.3994,A,100.0,"dilution, high_sbc, extreme_valuation",71.627,57.4902,35.3676,92.5684,7.1192,11.3562
+11,SYSGB,Harbor Tools (Synthetic),Industrials,default,38.2148,A,100.0,,24.1809,19.1485,40.687,24.978,70.4018,66.0131
+12,SYSGC,Ironleaf Foods (Synthetic),Consumer Defensive,default,37.3028,A,100.0,,25.8842,46.2857,31.9181,22.8038,56.6897,66.0131
+13,SYSGA,Granite Industrial (Synthetic),Industrials,default,36.0279,A,100.0,,25.4691,28.2353,30.5903,27.1522,58.4765,66.0131
+14,SYHGB,Nimbus Genomics (Synthetic),Healthcare,default,28.5983,A,100.0,"negative_earnings, dilution, high_sbc",72.5529,58.1176,24.4265,44.099,2.5663,11.3562
+15,SYBKC,Fairhaven Bank (Synthetic),Financial Services,bank,25.4229,A,100.0,,12.4815,,20.5556,2.7778,46.5179,76.3072
+16,SYHGA,Meridian AI Labs (Synthetic),Technology,default,21.3345,A,100.0,"negative_earnings, dilution, high_sbc",53.836,52.4706,19.3088,44.099,2.1626,11.3562
+17,SYINB,Jasper Specialty Insurance (Synthetic),Financial Services,insurance,21.2143,A,100.0,margin_deterioration,8.8158,2.9412,29.7866,4.7386,60.0403,66.0131

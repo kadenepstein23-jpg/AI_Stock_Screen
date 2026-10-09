@@ -1,0 +1,246 @@
+# Industry profiles decide which metrics apply, which substitutes are used and
+# which flag thresholds change. A metric listed under not_applicable is dropped
+# and its pillar weight is re-spread — it is NOT scored as missing.
+#
+# Matching order: the first profile whose rule matches wins. Rules can match on
+#   sic_ranges         : [[start, end], ...]  (inclusive)
+#   industry_patterns  : case-insensitive substrings of the provider's industry
+#   sector_patterns    : case-insensitive substrings of the provider's sector
+
+profiles:
+  bank:
+    label: Banks, thrifts & mortgage REITs
+    match:
+      sic_ranges: [[6020, 6036], [6120, 6129]]
+      # Mortgage REITs (Annaly, Starwood) own loans and mortgage securities, not property: no real-estate
+      # D&A, so FFO is just net income. Like banks they earn a funded spread and are valued on book value.
+      industry_patterns: ["banks", "bank", "savings", "thrift", "reit - mortgage"]
+    not_applicable: [ev_ebitda_x, ev_sales_x, ebitda_margin_pct, ebitda_cagr_3y_pct,
+                     net_debt_to_ebitda_x, net_debt_to_ebitda_chg_3y_x, current_ratio_x,
+                     interest_coverage_x, gross_margin_pct, gross_margin_chg_3y_pp,
+                     operating_margin_pct, operating_margin_chg_3y_pp,
+                     operating_margin_stdev_5y_pp, operating_leverage_3y_pp,
+                     roic_pct, fcf_margin_pct, fcf_yield_pct, p_fcf_x, fcf_cagr_3y_pct,
+                     fcf_payout_3y_pct, fcf_conversion_3y_pct, fcf_positive_share_5y_pct,
+                     # a bank's funding is mostly deposits and SEC debt tags capture only part of
+                     # its borrowings, so cash/debt figures are misleading rather than informative
+                     cash_musd, total_debt_musd, net_debt_musd, debt_to_equity_x, enterprise_value_musd,
+                     fcf_cagr_5y_pct, fcf_margin_chg_3y_pp, fcf_payout_ratio_pct, opinc_cagr_3y_pct,
+                     operating_margin_chg_5y_pp, margin_vs_10y_avg_x, ev_ebitda_vs_5y_median_pct,
+                     # REIT-only metrics
+                     p_ffo_x, ffo_payout_pct,
+                     # replaced by ROE on average common equity
+                     roe_pct,
+                     # robust trend / normalized equivalents of the n/a metrics above
+                     ebitda_trend_growth_pct, opinc_trend_growth_pct, operating_leverage_trend_pp,
+                     operating_margin_trend_3y_pp, gross_margin_trend_3y_pp, op_margin_base_vs_trend_3y_pp,
+                     ebitda_growth_scored_pct, operating_leverage_scored_pp, operating_margin_change_scored_pp,
+                     gross_margin_change_scored_pp, fcf_trend_growth_pct, fcf_growth_scored_pct,
+                     ev_ebitda_normalized_x, fcf_yield_normalized_pct]
+    substitutes:
+      roic_pct: roa_pct
+      fcf_payout_3y_pct: payout_ratio_pct
+      ev_ebitda_x: ptbv_x
+      p_fcf_x: pb_x
+    extra_metrics:                  # added to the named pillar for this profile
+      profitability: [{name: roe_avg_common_pct, direction: higher, weight: 1.0}]
+      financial_strength: [{name: equity_to_assets_pct, direction: higher, weight: 1.5}]
+    disabled_flags: [high_leverage, rising_leverage, low_interest_coverage, negative_fcf,
+                     poor_fcf_conversion, weak_dividend_coverage]
+    data_gaps: "Net interest margin, efficiency ratio, CET1 and credit-loss data are not in the standardized feed; for mortgage REITs, distributable earnings and book value per share history are not either (GAAP earnings include mark-to-market swings)."
+
+  insurance:
+    label: Insurers
+    cyclical: true                      # underwriting cycle: flag margins far above the 10-yr average
+    match:
+      sic_ranges: [[6310, 6399]]          # carriers; 6411 (agents & brokers) are fee businesses -> default
+      industry_patterns: ["insurance"]
+      # managed-care plans (UnitedHealth: SIC 6324, "Healthcare Plans") are service businesses with
+      # meaningful FCF and debt/EBITDA, not float-funded underwriters
+      exclude_industry_patterns: ["broker", "agents", "healthcare plans", "health care plans"]
+      exclude_sic_ranges: [[6324, 6324]]
+    # Insurers invest premiums before paying claims: operating cash flow includes that float, the
+    # investment portfolio (not "cash") backs liabilities, and there is no gross margin or EBITDA.
+    not_applicable: [ev_ebitda_x, ev_sales_x, enterprise_value_musd, ebitda_margin_pct, ebitda_cagr_3y_pct,
+                     ev_ebitda_vs_5y_median_pct, net_debt_to_ebitda_x, net_debt_to_ebitda_chg_3y_x,
+                     current_ratio_x, gross_margin_pct, gross_margin_chg_3y_pp, operating_leverage_3y_pp,
+                     roic_pct, roe_pct, cash_musd, net_debt_musd, debt_to_equity_x,
+                     fcf_margin_pct, fcf_cagr_3y_pct, fcf_cagr_5y_pct, fcf_margin_chg_3y_pp, fcf_yield_pct,
+                     p_fcf_x, fcf_payout_ratio_pct, fcf_payout_3y_pct, fcf_conversion_3y_pct,
+                     fcf_positive_share_5y_pct,
+                     ebitda_trend_growth_pct, operating_leverage_trend_pp, gross_margin_trend_3y_pp,
+                     ebitda_growth_scored_pct, operating_leverage_scored_pp, gross_margin_change_scored_pp,
+                     fcf_trend_growth_pct, fcf_growth_scored_pct,
+                     ev_ebitda_normalized_x, fcf_yield_normalized_pct]
+    substitutes:
+      roic_pct: roe_avg_common_pct        # return on average common equity, as insurers report it
+      ev_ebitda_x: pb_x
+      p_fcf_x: ptbv_x
+      fcf_margin_pct: net_margin_pct
+      fcf_cagr_3y_pct: bvps_ex_aoci_cagr_3y_pct   # book value compounding is the insurer growth measure
+      fcf_growth_scored_pct: bvps_ex_aoci_cagr_3y_pct
+      net_debt_to_ebitda_x: debt_to_capital_pct
+      fcf_payout_3y_pct: payout_ratio_pct
+    extra_metrics:
+      growth: [{name: bvps_ex_aoci_cagr_5y_pct, direction: higher, weight: 0.75}]
+      quality_stability: [{name: bvps_ex_aoci_cagr_5y_pct, direction: higher, weight: 0.75}]
+    flag_metrics:
+      leverage: debt_to_capital_pct
+    flag_thresholds:
+      high_leverage: {threshold: 35.0, severe_threshold: 45.0}   # debt / capital, %
+    disabled_flags: [rising_leverage, negative_fcf, poor_fcf_conversion, weak_dividend_coverage]
+    data_gaps: >-
+      Combined ratio, catastrophe losses, reserve development and float are not in standardized data.
+      ROE uses net income on average common equity (companies' "core" ROE also excludes AOCI and
+      realized gains). Operating margin is EBIT (pretax + interest) and includes investment gains.
+
+  reit:
+    label: REITs
+    match:
+      sic_ranges: [[6798, 6798]]
+      industry_patterns: ["reit"]
+      # former REITs keep SIC 6798 (CoreCivic, Howard Hughes): the industry label must say REIT
+      sic_requires_industry_patterns: ["reit"]
+    # GAAP earnings are depressed by real-estate depreciation, so earnings-based measures are
+    # replaced by FFO-based ones; EBIT-based leverage/coverage by EBITDAre-based ones.
+    not_applicable: [eps_cagr_1y_pct, eps_cagr_3y_pct, eps_cagr_5y_pct, eps_trend_growth_pct,
+                     eps_base_vs_trend_3y_x, eps_base_vs_trend_5y_x, pe_x, peg_hist_x, pe_vs_5y_median_pct,
+                     payout_ratio_pct, earnings_positive_share_5y_pct, roe_pct, roe_avg_common_pct,
+                     fcf_conversion_3y_pct, net_debt_to_ebitda_x, net_debt_to_ebitda_chg_3y_x,
+                     interest_coverage_x, gross_margin_pct, gross_margin_chg_3y_pp, current_ratio_x,
+                     gross_margin_trend_3y_pp, gross_margin_change_scored_pp, eps_growth_scored_pct,
+                     eps_normalized, earnings_vs_normalized_x, pe_normalized_x,
+                     # FCF: standardized capex for REITs includes property acquisitions and
+                     # development (Sharadar, Realty Income FY2025: capex $4.04B vs $3.82B operating
+                     # cash flow, FCF -$41M; SEC-tagged improvements were $132M). Growth spending is
+                     # not maintenance capex, so FCF-based measures are replaced by FFO-based ones
+                     # for every REIT, keeping the peer group on one definition.
+                     fcf_margin_pct, fcf_margin_ex_sbc_pct, fcf_margin_chg_3y_pp, fcf_cagr_3y_pct,
+                     fcf_cagr_5y_pct, fcf_trend_growth_pct, fcf_growth_scored_pct, p_fcf_x, fcf_yield_pct,
+                     fcf_yield_normalized_pct, fcf_payout_ratio_pct, fcf_payout_3y_pct,
+                     fcf_positive_share_5y_pct]
+    substitutes:
+      fcf_payout_3y_pct: ffo_payout_pct
+      p_fcf_x: p_ffo_x
+      fcf_growth_scored_pct: ffo_ps_cagr_3y_pct
+      pe_x: p_ffo_x
+      payout_ratio_pct: ffo_payout_pct
+      eps_cagr_3y_pct: ffo_ps_cagr_3y_pct
+      eps_cagr_5y_pct: ffo_ps_cagr_5y_pct
+      eps_trend_growth_pct: ffo_ps_cagr_3y_pct   # FFO/share growth (EPS is n/a for REITs)
+      eps_growth_scored_pct: ffo_ps_cagr_3y_pct
+      net_debt_to_ebitda_x: net_debt_to_ebitdare_x
+      interest_coverage_x: ebitdare_interest_coverage_x
+      net_debt_to_ebitda_chg_3y_x: net_debt_to_ebitdare_chg_3y_x
+    flag_metrics:                     # which metric each red flag reads for this profile
+      leverage: net_debt_to_ebitdare_x
+      leverage_change: net_debt_to_ebitdare_chg_3y_x
+      dilution_offset: ffo_ps_cagr_3y_pct   # equity issuance is accretive if FFO/share still grows
+      coverage: ebitdare_interest_coverage_x
+      earnings: ffo_per_share         # negative_earnings = negative FFO, not a GAAP loss
+      dividend_coverage: ffo_payout_pct   # weak_dividend_coverage = dividends above FFO
+    disabled_flags: [earnings_payout_over_100, poor_fcf_conversion, negative_fcf]   # negative FFO -> negative_earnings
+    flag_thresholds:
+      high_leverage: {threshold: 7.0, severe_threshold: 9.0}
+      low_interest_coverage: {threshold: 2.5, severe_threshold: 1.5}
+    data_gaps: >-
+      AFFO and maintenance capex are not reported in standardized data, and standardized capex
+      includes property acquisitions and development, so FCF is not used for REITs: dividend
+      coverage, valuation and cash-flow growth are measured on FFO. FFO follows NAREIT when impairment and
+      gain-on-sale data exist (SEC); otherwise it is net income + D&A. Trailing EBITDAre, not
+      management's annualized pro forma figure.
+
+  utility:
+    label: Utilities
+    match:
+      sic_ranges: [[4900, 4991]]
+      sector_patterns: ["utilities"]
+      # SIC 4900-4991 also covers pipelines (4922-4924), LNG and refuse systems (4953); the
+      # "Utilities" sector also holds equipment makers (GE Vernova, Fluence) and merchant generators.
+      # None of them have a rate base, so their FCF and leverage mean what they do elsewhere.
+      exclude_industry_patterns: ["oil & gas", "waste management", "independent power producers"]
+      exclude_sic_ranges: [[1500, 1799], [2000, 3999]]   # construction and manufacturing
+    # Regulated utilities spend more than their operating cash flow on capex (rate-base growth funded
+    # with debt and equity), so free cash flow is structurally negative and says nothing about
+    # dividend safety; they also don't report gross profit and run negative working capital.
+    not_applicable: [fcf_margin_pct, fcf_cagr_3y_pct, fcf_cagr_5y_pct, fcf_margin_chg_3y_pp, fcf_yield_pct,
+                     p_fcf_x, fcf_payout_ratio_pct, fcf_payout_3y_pct, fcf_conversion_3y_pct,
+                     fcf_positive_share_5y_pct, gross_margin_pct, gross_margin_chg_3y_pp, current_ratio_x,
+                     gross_margin_trend_3y_pp, gross_margin_change_scored_pp, fcf_yield_normalized_pct,
+                     fcf_trend_growth_pct, fcf_growth_scored_pct]
+    substitutes:
+      fcf_payout_3y_pct: payout_ratio_pct
+      p_fcf_x: pb_x                       # regulated returns are earned on (book) rate base
+    extra_metrics:                        # rating-agency style cash-flow leverage
+      financial_strength: [{name: cfo_to_debt_pct, direction: higher, weight: 1.0}]
+      dividend_safety: [{name: cfo_to_debt_pct, direction: higher, weight: 1.0}]
+    flag_metrics:
+      leverage: cfo_to_debt_pct           # high-leverage flag = CFO/debt BELOW the thresholds
+    disabled_flags: [negative_fcf, poor_fcf_conversion, weak_dividend_coverage]
+    flag_thresholds:
+      high_leverage: {threshold: 12.0, severe_threshold: 8.0}    # CFO/debt %, typical downgrade zone
+      rising_leverage: {threshold: 1.5, min_level: 5.0}
+      low_interest_coverage: {threshold: 2.0, severe_threshold: 1.2}
+    data_gaps: >-
+      Rate base, allowed ROE, regulatory lag and rating-agency FFO/debt are not in standardized data;
+      CFO/debt is the proxy. Earnings and payout ratios are GAAP; many utilities also report an
+      adjusted EPS that excludes hedge mark-to-market, impairments or regulatory charges, which can
+      differ materially. Interest coverage uses cash interest paid when the filer tags no
+      interest-expense line.
+
+  cyclical:
+    label: Cyclicals (energy, materials, autos, semis, homebuilders, heavy machinery)
+    cyclical: true
+    match:
+      sic_ranges: [[1000, 1499], [2800, 2829], [2900, 2999], [3310, 3399], [3674, 3674],
+                   [3711, 3716], [1520, 1531], [3530, 3537], [4400, 4499]]
+      # 1520-1531 homebuilders (Lennar files as 1520); 3530-3537 construction, mining and oilfield machinery
+      sector_patterns: ["energy", "basic materials", "materials"]
+      industry_patterns: ["semiconductor", "auto manufacturers", "residential construction",
+                          "steel", "chemicals", "oil", "gas", "mining", "marine shipping"]
+    # Earnings swing with commodity prices / industry capacity. Trailing P/E and EV/EBITDA look
+    # cheapest exactly when earnings peak, so valuation uses NORMALIZED earnings: the latest-year value
+    # of the robust trend line through up to 8 fiscal years (mid-cycle for a business that does not
+    # grow; growth-aware for one that does). P/E-vs-history, P/FCF and PEG are not scored: they reward peak earnings.
+    # The trailing figures stay visible (reference only); scoring uses the normalized ones.
+    not_applicable: []
+    score_with:
+      pe_x: pe_normalized_x
+      ev_ebitda_x: ev_ebitda_normalized_x
+      fcf_yield_pct: fcf_yield_normalized_pct
+      # Earnings and margin trends depend on where in the cycle the 8-year window starts and ends
+      # (NUE's EPS trend read 56%/yr at the 2022 peak and 6%/yr in 2025). Book value per share
+      # compounds through the cycle - retained boom profits and buybacks - so it measures growth instead.
+      eps_growth_scored_pct: bvps_cagr_5y_pct
+    not_scored: [p_fcf_x, peg_hist_x, pe_vs_5y_median_pct, ev_ebitda_vs_5y_median_pct,
+                 ebitda_growth_scored_pct, operating_leverage_scored_pp, operating_margin_change_scored_pp,
+                 gross_margin_change_scored_pp, fcf_growth_scored_pct]
+    metric_weights: {bvps_cagr_5y_pct: 0.75}
+    # The industry label is a prior, not a verdict: a company in a cyclical industry whose own record
+    # shows fast, uninterrupted growth (e.g. a semiconductor designer riding a secular trend) is scored
+    # as a normal operating company. Requires 8y revenue trend >= 15%/yr AND at most one down year in 5.
+    exit_rule:
+      to: default
+      all:
+        revenue_trend_growth_pct: {min: 15.0, label: "revenue trend %/yr"}
+        revenue_decline_years_5y: {max: 1, label: "revenue down-years in 5y"}
+    data_gaps: >-
+      Commodity prices, production volumes, reserves and capacity utilization are not in standardized
+      data. Normalized earnings come from up to 8 fiscal years, which may not span a full cycle.
+
+  default:
+    label: General operating companies
+    match: {}
+    not_applicable: []
+    # A financial company that is funded like a bank - broker-dealers, card issuers, consumer lenders
+    # (Goldman Sachs: SIC 6211, equity 8% of assets; American Express: SIC 6199) - gets bank treatment:
+    # its "debt" is funding for financial assets, so debt/EBITDA, FCF and EV multiples mislead.
+    # Asset-light financials (Visa, exchanges, asset managers) have far more equity and stay here.
+    exit_rule:
+      to: bank
+      # only lenders and balance-sheet financials: an exchange (CME: clearing deposits inflate assets) or
+      # a bitcoin miner filed under SIC 6199 has low equity/assets for reasons that have nothing to do with banking
+      industry_patterns: ["bank", "capital markets", "credit services", "mortgage", "asset management"]
+      sic_ranges: [[6000, 6299]]
+      all:
+        equity_to_assets_pct: {max: 15.0, label: "equity/assets %"}

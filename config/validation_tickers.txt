@@ -1,0 +1,40 @@
+# Validation set: spans every industry profile. Used for SEC cross-checks.
+# Technology / growth
+AAPL
+MSFT
+NVDA
+GOOGL
+ADBE
+# Consumer / staples
+PG
+KO
+PEP
+COST
+HD
+# Industrials
+CAT
+HON
+UNP
+# Healthcare
+JNJ
+ABBV
+# Banks
+JPM
+BAC
+USB
+# Insurance
+TRV
+CB
+# REITs
+O
+PLD
+PSA
+# Utilities
+NEE
+DUK
+# Cyclicals
+XOM
+CVX
+NUE
+LEN
+F

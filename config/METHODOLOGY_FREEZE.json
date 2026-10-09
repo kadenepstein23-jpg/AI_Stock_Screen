@@ -1,0 +1,6 @@
+{
+  "methodology_fingerprint": "fc2159212b4d7966",
+  "frozen_at": "2026-10-08T14:04:11",
+  "note": "after Step 9, paid month 2026-10-08",
+  "rules": "After the freeze: no changes to weights, thresholds, profile rules or company-specific exceptions. Only objective data, parsing, classification, period-matching or calculation fixes. Any methodology change requires a new freeze AND a new, unused holdout."
+}

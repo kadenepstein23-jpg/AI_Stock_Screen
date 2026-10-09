@@ -1,0 +1,7 @@
+pandas>=1.5
+numpy>=1.23
+pyarrow>=10
+PyYAML>=6.0
+requests>=2.28
+matplotlib>=3.6   # optional: charts
+pytest>=7         # tests

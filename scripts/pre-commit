@@ -1,0 +1,40 @@
+#!/bin/sh
+# Git pre-commit hook: block commits that would publish licensed data or secrets.
+# Install:  cp scripts/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+PY=$(command -v python3 || command -v python)
+
+# 1. Restricted paths, even if force-added (git add -f) past .gitignore.
+bad=$(git diff --cached --name-only --diff-filter=ACMR | grep -E \
+  '(^|/)\.env($|\.)|^data/|^outputs/|^compliance/|(^|/)full/|(^|/)retained/|(^|/)cache/|\.(parquet|feather|bulk|zip|gz|pkl|db|sqlite)$' \
+  | grep -v '^\.env\.example$')
+if [ -n "$bad" ]; then
+  echo "Commit blocked: restricted files are staged:"; echo "$bad"; exit 1
+fi
+
+# 2. The real values in .env must not appear in any staged file (values are never printed).
+if [ -f .env ]; then
+  git diff --cached --name-only --diff-filter=ACMR -z | "$PY" -c '
+import sys, subprocess
+vals = []
+for line in open(".env", encoding="utf-8", errors="ignore"):
+    if "=" in line and not line.lstrip().startswith("#"):
+        k, v = line.split("=", 1)
+        v = v.strip().strip("\"").strip("\x27")
+        if len(v) >= 8:
+            vals.append((k.strip(), v))
+hit = False
+for f in filter(None, sys.stdin.read().split("\0")):
+    blob = subprocess.run(["git", "show", ":" + f], capture_output=True).stdout.decode("utf-8", "ignore")
+    for k, v in vals:
+        if v in blob:
+            print(f"Commit blocked: value of {k} from .env found in {f}")
+            hit = True
+sys.exit(1 if hit else 0)
+' || exit 1
+fi
+
+# 3. Licensed raw data / provenance check.
+"$PY" -m screener check-public || {
+  echo "Commit blocked: licensed data or secrets would be published (see above)."
+  exit 1
+}

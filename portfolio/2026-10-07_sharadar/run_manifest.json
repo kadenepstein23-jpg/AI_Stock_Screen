@@ -1,0 +1,39 @@
+{
+  "run_id": "2026-10-09_003743_sharadar",
+  "created_at": "2026-10-09T00:37:48",
+  "provider": "sharadar",
+  "data_as_of": "2026-10-07",
+  "license_retention": "delete_on_cancel",
+  "attribution": "Data from Sharadar.com",
+  "config_fingerprint": "2d3f7ffc80e4",
+  "screener_version": "2.0.0",
+  "universe": {
+    "securities": 21024,
+    "investable_universe": 2213,
+    "excluded_by_first_reason": {
+      "delisted": 11390,
+      "security type not allowed": 3932,
+      "market cap below minimum or missing": 1571,
+      "secondary share class": 1339,
+      "SPAC / blank check (SIC)": 308,
+      "price below minimum or missing": 96,
+      "no positive revenue": 72,
+      "insufficient fiscal-year history": 54,
+      "illiquid (median $ volume) or missing": 24,
+      "SPAC / blank check (name)": 17,
+      "exchange not allowed": 8
+    },
+    "screens": {
+      "growth": {
+        "gate_eligible": 844,
+        "ranked": 534,
+        "needs_review": 310
+      },
+      "income": {
+        "gate_eligible": 795,
+        "ranked": 504,
+        "needs_review": 291
+      }
+    }
+  }
+}

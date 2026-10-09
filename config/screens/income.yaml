@@ -1,0 +1,57 @@
+# Income / Value screen: sustainable, growing dividends at a sensible price.
+name: income
+label: Income / Value Screen
+description: >
+  Dividend payers whose payouts are covered by free cash flow and earnings,
+  backed by stable profitability and a sound balance sheet, trading at a
+  reasonable valuation versus peers and their own history. High yield alone
+  earns little; unsustainable yield is penalized or excluded.
+
+gates:
+  - {metric: dividend_yield_pct,    op: ">=", value: 1.5}
+  - {metric: dividend_paying_years, op: ">=", value: 3}
+
+pillars:
+  dividend_safety:
+    weight: 30
+    metrics:
+      - {name: fcf_payout_3y_pct,    direction: lower,  weight: 1.5}
+      - {name: payout_ratio_pct,     direction: lower,  weight: 1.0}
+      - {name: net_debt_to_ebitda_x, direction: lower,  weight: 1.0}
+      - {name: interest_coverage_x,  direction: higher, weight: 0.75}
+      - {name: dividend_cut_5y,      direction: lower,  weight: 0.75}
+  quality_stability:
+    weight: 20
+    metrics:
+      - {name: roic_pct,                       direction: higher, weight: 1.0}
+      - {name: earnings_positive_share_5y_pct, direction: higher, weight: 0.75}
+      - {name: fcf_positive_share_5y_pct,      direction: higher, weight: 0.75}
+      - {name: operating_margin_stdev_5y_pp,   direction: lower,  weight: 0.75}
+      - {name: operating_margin_change_scored_pp, direction: higher, weight: 0.5}
+  dividend_growth:
+    weight: 15
+    metrics:
+      - {name: dps_cagr_5y_pct,              direction: higher, weight: 1.0}
+      - {name: dps_cagr_3y_pct,              direction: higher, weight: 0.75}
+      - {name: dividend_growth_streak_years, direction: higher, weight: 0.75}
+  yield:
+    weight: 15
+    metrics:
+      - {name: dividend_yield_pct,    direction: higher, weight: 1.0}
+      - {name: shareholder_yield_pct, direction: higher, weight: 1.0}
+  valuation:
+    weight: 15
+    metrics:
+      - {name: pe_x,                       direction: lower,  weight: 1.0}
+      - {name: p_fcf_x,                    direction: lower,  weight: 0.75}
+      - {name: ev_ebitda_x,                direction: lower,  weight: 0.75}
+      - {name: pe_vs_5y_median_pct,        direction: lower,  weight: 0.5}
+  growth:
+    weight: 5
+    metrics:
+      - {name: revenue_cagr_5y_pct, direction: higher, weight: 1.0}
+      - {name: eps_growth_scored_pct, direction: higher, weight: 1.0}
+
+flag_severity:
+  negative_earnings: severe        # an income stock losing money is excluded
+  no_dividend: ignore

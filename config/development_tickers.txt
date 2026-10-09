@@ -1,0 +1,18 @@
+# DEVELOPMENT SET (explicit part): companies looked at while developing or debugging the screener.
+# They are never drawn into the holdout. The full development set also includes the validation
+# tickers, the DJIA-30 sample, the universe spot checks and every ticker named in docs/, tests/,
+# config/ or screener/ (see screener/holdout.py: development_set). Add to this list whenever a
+# company is inspected for debugging; never remove names.
+
+# Sharadar paid-month debugging (2026-10-08): profile / classification checks
+AROC KMI WMB OKE ET EPD TRGP ATO NI SRE CQP AM DTM EE KGS KNTK LNG NFG NGL VG WES
+CEG CWEN ORA XIFR GEV FLNC MWH NRG VST HNRG CLH CWST NVRI RSG WCN WM
+CME CIFR CORZ RHLD SECZ CXW HHH BRK.B BRK.A
+# dual-class check
+GOOGL GOOG META FOXA FOX NWSA NWS BF.B LEN.B HEI HEI.A
+# dividend-cut, dilution and REIT FFO investigations
+GAIN XHR DHC BMY SHO CARE BGC CLF VMRK UAN VFC SUI REXR COLD AMT GNL ARI BXMT DX NLY RITM STWD
+DEI DRH GOOD IIPR INN SAFE ORRF ABX PTRN VVX HIMS SEPN CSWC FDMT BE MARA
+# companies shown in the top-20 lists of the diagnostic full-market runs (seen, not tuned on)
+NVDA DECK FIX KNSL NBIX INCY POWL IESC USLM ACGL CTRE AGX TW EME ANF APP STRL PODD TRNO DOCS MEDP
+KRG HRB OZK KFY UFPI AMH SPG SLM MTG SYF G HST CI OFG UDR CBL INVH NRIM BRX EG EIX LEA HIG ALV CPT

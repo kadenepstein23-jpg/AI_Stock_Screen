@@ -1,0 +1,94 @@
+# Red-flag definitions. Severity: info | moderate | severe | ignore
+#   info     -> shown in outputs, no score impact
+#   moderate -> points deducted from the composite (see settings.scoring)
+#   severe   -> company excluded from the ranked list (moved to needs_review)
+# Screens may override severity (config/screens/*.yaml -> flag_severity).
+# Industry profiles may override thresholds (config/industry_profiles.yaml).
+
+negative_earnings:
+  severity: moderate
+  description: Trailing net income is negative
+revenue_decline:
+  severity: moderate
+  threshold: 0.0                 # 3-yr revenue CAGR below this (%)
+  description: Revenue shrinking over 3 years
+margin_deterioration:
+  severity: moderate
+  threshold: -3.0                # operating margin change over 3 yrs, percentage points
+  description: Operating margin down materially over 3 years
+negative_fcf:
+  severity: moderate
+  description: Trailing free cash flow is negative
+poor_fcf_conversion:
+  severity: moderate
+  threshold: 60.0                # 3-yr FCF / net income (%), when net income is positive
+  description: Free cash flow well below reported earnings
+high_leverage:
+  severity: moderate
+  threshold: 4.0                 # net debt / EBITDA (x)
+  severe_threshold: 6.0
+  description: High net debt relative to EBITDA
+rising_leverage:
+  severity: moderate
+  threshold: 1.0                 # increase in net debt/EBITDA over 3 yrs (x)
+  min_level: 2.5                 # only flagged when current leverage is above this
+  description: Leverage rising materially
+low_interest_coverage:
+  severity: moderate
+  threshold: 3.0
+  severe_threshold: 1.5
+  description: EBIT covers interest expense thinly
+dilution:
+  severity: moderate
+  threshold: 3.0                 # diluted share count 3-yr CAGR (%)
+  severe_threshold: 8.0
+  description: Share count growing (dilution)
+high_sbc:
+  severity: moderate
+  threshold: 10.0                # SBC as % of revenue
+  description: Stock-based compensation is a large share of revenue
+weak_dividend_coverage:
+  severity: moderate
+  threshold: 100.0               # 3-yr dividends / FCF (%)
+  description: Dividends exceed free cash flow over 3 years (FFO for REITs)
+earnings_payout_over_100:
+  severity: moderate
+  threshold: 100.0
+  description: Dividends exceed net income
+yield_trap:
+  severity: severe
+  yield_vs_peer_median: 2.0      # yield at least this multiple of the peer median...
+  yield_vs_own_5y_median: 1.5    # ...or this multiple of the company's own 5-yr median yield
+  description: >
+    Unusually high yield combined with falling earnings, a falling price,
+    or uncovered dividends
+recent_distribution:
+  severity: severe
+  threshold: 8.0                 # % of the share price distributed in one day (spin-off, special dividend)
+  description: >
+    A spin-off or large special dividend since the start of the trailing-twelve-month window:
+    trailing earnings, dividends and valuation multiples still include what was distributed,
+    so the company is reviewed instead of ranked
+dividend_cut:
+  severity: info
+  description: Dividend per share cut by more than 10% in the last 5 years
+negative_equity:
+  severity: info
+  description: Shareholders' equity is negative (ROE and P/B not meaningful)
+extreme_valuation:
+  severity: moderate
+  pe_threshold: 60.0
+  ev_sales_threshold: 20.0
+  description: Valuation multiple in the extreme tail
+cyclical_peak:
+  severity: moderate
+  threshold: 1.5                 # current op margin / 10-yr average op margin
+  earnings_threshold: 1.5             # or latest net income / normalized net income (8y-avg margin x revenue)
+  description: Margins far above the long-run average in a cyclical industry
+short_history:
+  severity: info
+  threshold: 5                   # fewer fiscal years than this
+  description: Limited financial history; multi-year metrics may be missing
+no_dividend:
+  severity: ignore
+  description: Company pays no dividend

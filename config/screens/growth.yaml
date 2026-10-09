@@ -1,0 +1,66 @@
+# Growth screen: durable, profitable, reasonably valued growth.
+# Weights are starting points; change them here, never in code.
+name: growth
+label: Growth Screen
+description: >
+  Companies compounding revenue, earnings and free cash flow with improving
+  margins, sound balance sheets and a valuation that is reasonable relative
+  to growth. Operating leverage (earnings growing faster than revenue) is
+  rewarded explicitly.
+
+# Eligibility gates (applied after the universe filters). A company must pass
+# every gate to be scored. Missing gate inputs = fails the gate.
+gates:
+  - {metric: revenue_cagr_3y_pct, op: ">=", value: 8.0}
+  - {metric: revenue_cagr_1y_pct, op: ">=", value: 0.0}
+
+pillars:
+  growth:
+    weight: 30
+    metrics:
+      - {name: revenue_cagr_3y_pct,  direction: higher, weight: 1.5}
+      - {name: revenue_cagr_5y_pct,  direction: higher, weight: 0.75}
+      - {name: eps_growth_scored_pct,    direction: higher, weight: 1.0}   # 3y CAGR + robust trend blend
+      - {name: fcf_growth_scored_pct,    direction: higher, weight: 0.75}  # noisy: capex cycles
+      - {name: ebitda_growth_scored_pct, direction: higher, weight: 0.25}  # largely overlaps EPS growth
+      - {name: revenue_accel_pp,     direction: higher, weight: 0.5}
+  operating_leverage:
+    weight: 10
+    metrics:
+      # operating-margin change is NOT scored here: it is the same information as operating leverage
+      - {name: operating_leverage_scored_pp,     direction: higher, weight: 1.0}
+      - {name: gross_margin_change_scored_pp,    direction: higher, weight: 0.5}
+  profitability:
+    weight: 20
+    metrics:
+      - {name: roic_pct,             direction: higher, weight: 1.5}
+      - {name: gross_margin_pct,     direction: higher, weight: 0.75}
+      - {name: operating_margin_pct, direction: higher, weight: 1.0}
+      - {name: fcf_margin_pct,       direction: higher, weight: 1.0}
+      - {name: fcf_conversion_3y_pct, direction: higher, weight: 0.75}
+  financial_strength:
+    weight: 15
+    metrics:
+      - {name: net_debt_to_ebitda_x, direction: lower,  weight: 1.5}
+      - {name: interest_coverage_x,  direction: higher, weight: 1.0}
+      - {name: current_ratio_x,      direction: higher, weight: 0.5}
+      - {name: equity_to_assets_pct, direction: higher, weight: 0.5}
+  valuation:
+    weight: 15
+    metrics:
+      - {name: ev_sales_x,   direction: lower,  weight: 0.75}
+      - {name: ev_ebitda_x,  direction: lower,  weight: 1.0}
+      - {name: fcf_yield_pct, direction: higher, weight: 1.0}
+      - {name: peg_hist_x,   direction: lower,  weight: 1.0}
+      - {name: pe_x,         direction: lower,  weight: 0.5}
+  capital_allocation:
+    weight: 10
+    metrics:
+      - {name: share_change_3y_cagr_pct, direction: lower, weight: 1.0}
+      - {name: sbc_pct_revenue,          direction: lower, weight: 1.0}
+
+# Flag severity overrides for this screen (see config/flags.yaml for defaults).
+flag_severity:
+  negative_earnings: moderate      # allowed, but penalized, for growth companies
+  cyclical_peak: severe            # peak-cycle growth and margins can't be ranked as growth -> needs review
+  no_dividend: ignore

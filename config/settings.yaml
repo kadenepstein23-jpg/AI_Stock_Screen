@@ -1,0 +1,100 @@
+# ---------------------------------------------------------------------------
+# AI Stock Screen — global settings
+# Every threshold the screener uses lives in config/, never hard-coded.
+# ---------------------------------------------------------------------------
+
+# Provider used when a command does not pass --provider.
+# synthetic : fictional companies, ships with the repo, safe to publish
+# sec       : SEC EDGAR XBRL (public-domain fundamentals, no prices)
+# sharadar  : licensed Sharadar Core US Equities Bundle (personal-use license)
+active_provider: synthetic
+
+paths:
+  data_dir: data            # raw downloads + normalized store (git-ignored)
+  outputs_dir: outputs      # run outputs
+  compliance_dir: compliance  # purge logs (keep these)
+
+# ---------------------------------------------------------------------------
+# Provider registry. `license.retention` drives purge + output tiers:
+#   public_domain   -> data may be kept and published
+#   retain_personal -> may be kept for private use, not published
+#   delete_on_cancel-> raw + normalized data must be deleted after the
+#                      subscription ends; only derived outputs may be kept
+# ---------------------------------------------------------------------------
+providers:
+  synthetic:
+    license:
+      retention: public_domain
+      attribution: "Synthetic demonstration data (fictional companies)"
+  sec:
+    user_agent_env: SEC_USER_AGENT          # e.g. "Your Name your@email.com"
+    max_requests_per_second: 8              # SEC limit is 10/s
+    extension_gain_sic: [6798]              # REITs: read property-sale gains tagged with company-extension concepts
+    extension_gain_filings: 4               # latest 10-K instances read (3 years each -> ~6 fiscal years)
+    license:
+      retention: public_domain
+      attribution: "Source: SEC EDGAR XBRL company facts"
+  sharadar:
+    api_key_env: SHARADAR_API_KEY           # set in .env, never committed
+    base_url: https://api.sharadar.com/v1.0/data
+    bulk_years: 10                          # matches the 10-year subscription tier
+    price_bulk_years: 5                     # SEP bulk: only price_history_days are kept, 5y zip is enough
+    min_free_disk_gb: 8                     # check-key warns below this (zipped bulk files + parquet store)
+    supplement:                             # public-domain SEC fields Sharadar lacks, filled at build time
+      from: sec                             # refresh first: refresh --provider sec --tickers-from sharadar:reit
+      profiles: [reit]
+      fields: [real_estate_impairment, gain_on_sale_real_estate]   # NAREIT FFO adjustments
+      max_period_gap_days: 10               # fiscal years matched by period end
+    price_history_days: 730                 # SEP prices kept locally (for liquidity + returns)
+    sample_api_key: test-api-key            # Sharadar's public key: AAPL only
+    sample_api_key_env: SHARADAR_SAMPLE_API_KEY   # free-account key (no card): DJIA-30 sample
+    license:
+      retention: delete_on_cancel
+      purge_deadline_days: 30
+      attribution: "Data from Sharadar.com"
+      attribution_url: https://sharadar.com/
+
+# ---------------------------------------------------------------------------
+# Investable universe
+# ---------------------------------------------------------------------------
+universe:
+  allowed_security_types: [common]          # common | adr | etf | fund | preferred | warrant | unit | right | other
+  include_adrs: false
+  exclude_secondary_share_classes: true
+  exchanges: [NYSE, NASDAQ, NYSEMKT, NYSEARCA, BATS]
+  exclude_sic_codes: [6770]                 # blank checks / SPACs
+  exclude_name_patterns: ["acquisition corp", "acquisition co", " spac", "blank check"]
+  min_market_cap_usd: 500000000
+  min_price: 5.0
+  min_median_dollar_volume_60d: 2000000
+  min_fiscal_years: 3
+  max_filing_age_days: 460                  # ~15 months: stale filers are excluded
+  require_positive_revenue: true
+
+# ---------------------------------------------------------------------------
+# Scoring mechanics (pillars and weights live in config/screens/*.yaml)
+# ---------------------------------------------------------------------------
+scoring:
+  # Metrics are converted to percentile ranks (mid-rank method), which is
+  # inherently robust to outliers, so no separate winsorization step is needed.
+  peer_blend: 0.70                 # weight on peer-group rank vs. universe rank
+  min_peer_group_size: 8           # smaller groups fall back to sector, then universe
+  missing_applicable_score: 0.35   # percentile assigned when a metric SHOULD exist but doesn't
+  # Not-meaningful values (e.g. P/E with losses, CAGR from a negative base).
+  # Per-metric override: add `nm_score:` to the metric in config/screens/*.yaml
+  not_meaningful_score_lower: 0.0    # "lower is better" metrics: NM = worst (losses, negative EBITDA)
+  not_meaningful_score_higher: 0.25  # "higher is better" metrics: NM = weak but not worst
+  min_pillar_coverage: 0.60        # below this a pillar is flagged low-confidence
+  confidence_grades:               # overall weighted data coverage -> grade
+    A: 0.90
+    B: 0.75
+    C: 0.60                        # below C -> "needs review", not ranked
+  moderate_flag_penalty: 4.0       # points off the 0-100 composite, per moderate flag
+  max_flag_penalty: 20.0
+  severe_flags_exclude: true
+
+outputs:
+  public_top_n: 25
+  charts: true
+  csv_encoding: utf-8-sig          # opens cleanly in Excel
+  float_decimals: 4

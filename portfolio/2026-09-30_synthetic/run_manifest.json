@@ -1,0 +1,35 @@
+{
+  "run_id": "2026-10-07_222514_synthetic",
+  "created_at": "2026-10-07T22:25:15",
+  "provider": "synthetic",
+  "data_as_of": "2026-09-30",
+  "license_retention": "public_domain",
+  "attribution": "Synthetic demonstration data (fictional companies)",
+  "config_fingerprint": "7a4af4a411e0",
+  "screener_version": "2.0.0",
+  "universe": {
+    "securities": 60,
+    "investable_universe": 50,
+    "excluded_by_first_reason": {
+      "security type not allowed": 4,
+      "stale or missing filings": 1,
+      "market cap below minimum or missing": 1,
+      "illiquid (median $ volume) or missing": 1,
+      "price below minimum or missing": 1,
+      "SPAC / blank check (SIC)": 1,
+      "secondary share class": 1
+    },
+    "screens": {
+      "growth": {
+        "gate_eligible": 18,
+        "ranked": 17,
+        "needs_review": 1
+      },
+      "income": {
+        "gate_eligible": 25,
+        "ranked": 20,
+        "needs_review": 5
+      }
+    }
+  }
+}
